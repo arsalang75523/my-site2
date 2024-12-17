@@ -103,15 +103,27 @@
         ul li {
             margin: 5px 0;
         }
+
+        .visit-counter {
+            margin-top: 40px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .visit-counter p {
+            margin: 0;
+        }
     </style>
 </head>
 <body>
     <header>
         <h1>Welcome to Our Website</h1>
         <nav class="menu">
-            <a href="#">Airdrop</a>
-            <a href="#">Promotional Frame</a>
-            <a href="#">MoxieFlow Game</a>
+            <a href="airdrop.html">Airdrop</a>
+            <a href="promo.html">Promotional Frame</a>
+            <a href="game.html">MoxieFlow Game</a>
         </nav>
     </header>
 
@@ -127,11 +139,11 @@
             <h2>Registered Users</h2>
             <ul id="userList"></ul>
         </div>
+    </div>
 
-        <div class="stats">
-            <h2>Site Visits</h2>
-            <p id="visitCount">0</p>
-        </div>
+    <div class="visit-counter">
+        <h2>Site Visits</h2>
+        <p id="visitCount">0</p>
     </div>
 
     <script>
@@ -154,7 +166,7 @@
                 return;
             }
 
-            const user = { name, wallet, points: 0, lastUpdate: Date.now() };
+            const user = { name, wallet, points: 0, streak: 0, lastUpdate: Date.now() };
             users.push(user);
             localStorage.setItem('users', JSON.stringify(users));
             updateUserList();
@@ -164,26 +176,28 @@
             userList.innerHTML = '';
             users.forEach(user => {
                 const li = document.createElement('li');
-                li.textContent = `${user.name} - ${user.wallet} - Points: ${user.points}`;
+                li.textContent = `${user.name} - ${user.wallet} - Points: ${user.points} - Streak: ${user.streak}`;
                 userList.appendChild(li);
             });
         }
 
-        // Add points daily
-        function updatePoints() {
+        function updatePointsAndStreak() {
             const now = Date.now();
+            const oneDay = 24 * 60 * 60 * 1000;
+
             users.forEach(user => {
-                const oneDay = 24 * 60 * 60 * 1000;
                 if (now - user.lastUpdate >= oneDay) {
                     user.points += 1;
+                    user.streak += 1;
                     user.lastUpdate = now;
                 }
             });
+
             localStorage.setItem('users', JSON.stringify(users));
             updateUserList();
         }
 
-        setInterval(updatePoints, 1000 * 60); // Check every minute
+        setInterval(updatePointsAndStreak, 1000 * 60); // Check every minute
 
         // Visit counter
         const visitCount = document.getElementById('visitCount');
